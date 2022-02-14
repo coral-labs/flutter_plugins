@@ -453,6 +453,8 @@ class MethodChannelCamera extends CameraPlatform {
     switch (resolutionPreset) {
       case ResolutionPreset.max:
         return 'max';
+      case ResolutionPreset.maxFourThree:
+        return 'maxFourThree';
       case ResolutionPreset.ultraHigh:
         return 'ultraHigh';
       case ResolutionPreset.veryHigh:

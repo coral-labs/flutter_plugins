@@ -9,6 +9,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.media.CamcorderProfile;
 import android.media.EncoderProfiles;
 import android.os.Build;
+import android.util.Log;
 import android.util.Size;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugins.camera.CameraProperties;
@@ -232,6 +233,20 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
   private void configureResolution(ResolutionPreset resolutionPreset, int cameraId)
       throws IndexOutOfBoundsException {
     if (!checkIsSupported()) {
+      return;
+    }
+
+    if (resolutionPreset == ResolutionPreset.maxFourThree) {
+      Size[] sizes = cameraProperties.getSizes();
+      Size size = sizes[0];
+      for (Size i : sizes) {
+        if (i.getWidth() * 3 / 4 == i.getHeight() && i.getWidth() > size.getWidth()){
+          size = i;
+        }
+      }
+      Log.i("ABCD", size.toString());
+      captureSize = size;
+      previewSize = size;
       return;
     }
 

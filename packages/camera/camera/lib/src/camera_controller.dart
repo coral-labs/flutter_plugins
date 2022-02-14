@@ -839,7 +839,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   Future<List<Size>> getSizes() {
     _throwIfNotInitialized("getSizes");
     try {
-      return CameraPlatform.instance.getSizes(_cameraId);
+      return CameraPlatform.instance.getSizes();
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }

@@ -10,6 +10,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:video_player/video_player.dart';
 
 class CameraExampleHome extends StatefulWidget {
@@ -631,7 +632,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
     final CameraController cameraController = CameraController(
       cameraDescription,
-      kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium,
+      ResolutionPreset.maxFourThree,
       enableAudio: enableAudio,
       imageFormatGroup: ImageFormatGroup.jpeg,
     );
@@ -677,17 +678,25 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     }
   }
 
-  void onTakePictureButtonPressed() {
-    takePicture().then((XFile? file) {
+  Future onTakePictureButtonPressed() async {
+    try {
+      final file = await takePicture();
       if (mounted) {
         setState(() {
           imageFile = file;
           videoController?.dispose();
           videoController = null;
         });
-        if (file != null) showInSnackBar('Picture saved to ${file.path}');
+        if (file != null) {
+          final result = await GallerySaver.saveImage(file.path);
+          if (result == true) {
+            showInSnackBar('Picture saved');
+          }
+        }
       }
-    });
+    } catch (e) {
+      showInSnackBar(e.toString());
+    }
   }
 
   void onFlashModeButtonPressed() {
