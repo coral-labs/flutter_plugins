@@ -834,4 +834,14 @@ class CameraController extends ValueNotifier<CameraValue> {
       super.removeListener(listener);
     }
   }
+
+  /// Get available sizes
+  Future<List<Size>> getSizes() {
+    _throwIfNotInitialized("getSizes");
+    try {
+      return CameraPlatform.instance.getSizes(_cameraId);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
 }

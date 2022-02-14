@@ -8,8 +8,11 @@ import android.app.Activity;
 import android.hardware.camera2.CameraAccessException;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Size;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
@@ -24,7 +27,10 @@ import io.flutter.plugins.camera.features.exposurelock.ExposureMode;
 import io.flutter.plugins.camera.features.flash.FlashMode;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
 import io.flutter.view.TextureRegistry;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
@@ -356,6 +362,23 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
             camera.dispose();
           }
           result.success(null);
+          break;
+        }
+      case "getSizes":
+        {
+          try {
+            Size[] sizes = camera.getSizes();
+            List<Object> sizesMap = new ArrayList<>();
+            for(Size size : sizes) {
+              Map<String, Object> resMap = new HashMap<>();
+              resMap.put("width", size.getWidth());
+              resMap.put("height", size.getHeight());
+              sizesMap.add(resMap);
+            }
+            result.success(sizesMap);
+          } catch (Exception e) {
+            handleException(e, result);
+          }
           break;
         }
       default:

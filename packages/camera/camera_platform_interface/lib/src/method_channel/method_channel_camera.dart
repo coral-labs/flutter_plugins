@@ -534,4 +534,25 @@ class MethodChannelCamera extends CameraPlatform {
         throw MissingPluginException();
     }
   }
+
+  @override
+  Future<List<Size>> getSizes() async {
+    final List<dynamic>? sizes =
+        await _channel.invokeMethod<List<dynamic>>('getSizes');
+    final List<Size> res = <Size>[];
+    sizes?.forEach((dynamic el) {
+      final int width = el['width'] as int;
+      final int height = el['height'] as int;
+      res.add(Size(width.toDouble(), height.toDouble()));
+    });
+    return res;
+  }
+
+  @override
+  Future<void> setSize(Size size) {
+    return _channel.invokeMethod<void>('setSize', <String, dynamic>{
+      'width': size.width,
+      'height': size.height,
+    });
+  }
 }

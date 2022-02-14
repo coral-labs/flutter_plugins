@@ -93,7 +93,7 @@ class Camera
     supportedImageFormats.put("jpeg", ImageFormat.JPEG);
   }
 
-  /**
+  /**distributionUrl
    * Holds all of the camera features/settings and will be used to update the request builder when
    * one changes.
    */
@@ -1181,5 +1181,9 @@ class Camera
     public static Handler create(Looper looper) {
       return new Handler(looper);
     }
+  }
+
+  public Size[] getSizes() {
+    return cameraProperties.getSizes();
   }
 }

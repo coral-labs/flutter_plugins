@@ -4,10 +4,12 @@
 
 package io.flutter.plugins.camera;
 
+import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.params.StreamConfigurationMap;
 import android.os.Build.VERSION_CODES;
 import android.util.Range;
 import android.util.Rational;
@@ -235,8 +237,10 @@ public interface CameraProperties {
    * @return int[] List of noise reduction modes that are supported by this camera device.
    */
   int[] getAvailableNoiseReductionModes();
-}
 
+  Size[] getSizes();
+
+}
 /**
  * Implementation of the @see CameraProperties interface using the @see
  * android.hardware.camera2.CameraCharacteristics class to access the different characteristics.
@@ -346,5 +350,11 @@ class CameraPropertiesImpl implements CameraProperties {
   public int[] getAvailableNoiseReductionModes() {
     return cameraCharacteristics.get(
         CameraCharacteristics.NOISE_REDUCTION_AVAILABLE_NOISE_REDUCTION_MODES);
+  }
+
+  @Override
+  public Size[] getSizes() {
+    StreamConfigurationMap map = cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+    return map.getOutputSizes(ImageFormat.JPEG);
   }
 }

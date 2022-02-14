@@ -256,4 +256,14 @@ abstract class CameraPlatform extends PlatformInterface {
   Future<void> dispose(int cameraId) {
     throw UnimplementedError('dispose() is not implemented.');
   }
+
+  /// Get available sizes
+  Future<List<Size>> getSizes() {
+    throw UnimplementedError('getSizes() is not implemented.');
+  }
+
+  /// Set photo and preview size
+  Future<void> setSize(Size size) {
+    throw UnimplementedError('setSize() is not implemented.');
+  }
 }
