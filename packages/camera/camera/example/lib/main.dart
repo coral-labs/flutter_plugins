@@ -63,6 +63,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   double _maxAvailableZoom = 1.0;
   double _currentScale = 1.0;
   double _baseScale = 1.0;
+  List<Size>? sizes;
 
   // Counting pointers (number of user fingers on screen)
   int _pointers = 0;
@@ -130,6 +131,19 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       key: _scaffoldKey,
       appBar: AppBar(
         title: const Text('Camera example'),
+        actions: [
+          IconButton(
+              onPressed: sizes?.isNotEmpty == true
+                  ? () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (c) => Text(
+                              sizes?.map((e) => e.toString()).join("\n") ??
+                                  ''));
+                    }
+                  : null,
+              icon: Icon(Icons.screen_lock_landscape))
+        ],
       ),
       body: Column(
         children: <Widget>[
@@ -668,6 +682,11 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
         cameraController
             .getMinZoomLevel()
             .then((value) => _minAvailableZoom = value),
+        cameraController.getSizes().then((value) {
+          setState(() {
+            sizes = value;
+          });
+        })
       ]);
     } on CameraException catch (e) {
       _showCameraException(e);

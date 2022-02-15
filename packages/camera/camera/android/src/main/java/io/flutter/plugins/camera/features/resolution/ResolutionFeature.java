@@ -238,16 +238,17 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
 
     if (resolutionPreset == ResolutionPreset.maxFourThree) {
       Size[] sizes = cameraProperties.getSizes();
-      Size size = sizes[0];
+      Size size = new Size(0,0);
       for (Size i : sizes) {
         if (i.getWidth() * 3 / 4 == i.getHeight() && i.getWidth() > size.getWidth()){
           size = i;
         }
       }
-      Log.i("ABCD", size.toString());
-      captureSize = size;
-      previewSize = size;
-      return;
+      if (size.getWidth() > 0) {
+        captureSize = size;
+        previewSize = size;
+        return;
+      }
     }
 
     if (Build.VERSION.SDK_INT >= 31) {
