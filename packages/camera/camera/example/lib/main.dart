@@ -10,6 +10,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:video_player/video_player.dart';
 
 class CameraExampleHome extends StatefulWidget {
@@ -62,6 +63,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   double _maxAvailableZoom = 1.0;
   double _currentScale = 1.0;
   double _baseScale = 1.0;
+  List<Size>? sizes;
 
   // Counting pointers (number of user fingers on screen)
   int _pointers = 0;
@@ -129,6 +131,19 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       key: _scaffoldKey,
       appBar: AppBar(
         title: const Text('Camera example'),
+        actions: [
+          IconButton(
+              onPressed: sizes?.isNotEmpty == true
+                  ? () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (c) => Text(
+                              sizes?.map((e) => e.toString()).join("\n") ??
+                                  ''));
+                    }
+                  : null,
+              icon: Icon(Icons.screen_lock_landscape))
+        ],
       ),
       body: Column(
         children: <Widget>[
@@ -631,7 +646,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
     final CameraController cameraController = CameraController(
       cameraDescription,
-      kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium,
+      ResolutionPreset.maxFourThree,
       enableAudio: enableAudio,
       imageFormatGroup: ImageFormatGroup.jpeg,
     );
@@ -667,6 +682,11 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
         cameraController
             .getMinZoomLevel()
             .then((value) => _minAvailableZoom = value),
+        cameraController.getSizes().then((value) {
+          setState(() {
+            sizes = value;
+          });
+        })
       ]);
     } on CameraException catch (e) {
       _showCameraException(e);
@@ -677,17 +697,25 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     }
   }
 
-  void onTakePictureButtonPressed() {
-    takePicture().then((XFile? file) {
+  Future onTakePictureButtonPressed() async {
+    try {
+      final file = await takePicture();
       if (mounted) {
         setState(() {
           imageFile = file;
           videoController?.dispose();
           videoController = null;
         });
-        if (file != null) showInSnackBar('Picture saved to ${file.path}');
+        if (file != null) {
+          final result = await GallerySaver.saveImage(file.path);
+          if (result == true) {
+            showInSnackBar('Picture saved');
+          }
+        }
       }
-    });
+    } catch (e) {
+      showInSnackBar(e.toString());
+    }
   }
 
   void onFlashModeButtonPressed() {

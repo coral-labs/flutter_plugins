@@ -23,4 +23,7 @@ enum ResolutionPreset {
 
   /// The highest resolution available.
   max,
+
+  /// The highest resolution available for 4:3.
+  maxFourThree,
 }
